@@ -16,7 +16,7 @@ def data():
     return(data)
 
 def test_data(data):
-    print(data['probs'].shape)
+    assert data['probs'].shape ==  torch.Size([80, 100])
 
 def test_tokenizer(data):
     tok = CharacterTokenizer()
@@ -25,20 +25,19 @@ def test_tokenizer(data):
     assert tok.int2text([7, 4, 11, 11, 14]) == "hello"
     assert len(tok) == 30
     tok = CharacterTokenizer(classes=data['classes'])
-    assert tok.vocab == [' ', '!', '"', '#', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '<SPACE>', '<PAD>', '<BOS>', '<EOS>']
+    assert tok.vocab == [' ', '!', '"', '#', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     assert tok.text2int("hello") == [60, 57, 64, 64, 67]
     assert tok.int2text([60, 57, 64, 64, 67]) == "hello"
-    assert len(tok) == 83
-    print(tok.pam)
+    assert len(tok) == 79
 
 def test_ctc_decoder(data):
     tok = CharacterTokenizer()
     d = CTCDecoder(tok)
     s = "hello"
     seq = tok.text2int('helloooo')
-    assert (d.charseq_decode(seq)) == ['h', 'e', 'l', 'o']
+    assert (d.charseq_decode(seq)) == 'helo'
 
 def test_greedy(data):
     tok = CharacterTokenizer(classes=data['classes'])
     decoder = GreedyDecoder(tok, blank_index=len(tok))
-    print(decoder.decode(data['probs']))
+    assert decoder.decode(data['probs']) == "the fak friend of the fomly hae tC"
