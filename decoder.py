@@ -9,7 +9,7 @@ class CharacterTokenizer:
     """
     Convert sentences into indices of characters and back
     """
-    def __init__(self, classes=string.ascii_lowercase):
+    def __init__(self, classes:str=string.ascii_lowercase):
         m = {}
         # TODO(slg): <EOS>?
         counter = 0
@@ -24,7 +24,7 @@ class CharacterTokenizer:
         self._map = m
         self._pam = self.inverse_map(self.map)
 
-    def __len__(self):
+    def __len__(self)->Dict[str,int]:
         return(len(self._map))
     
     @staticmethod
@@ -62,11 +62,11 @@ class CharacterTokenizer:
 
 
 class CTCDecoder(object):
-    def __init__(self, char_tok, blank_index=0):
+    def __init__(self, char_tok:CharacterTokenizer, blank_index:int=0):
         self.tok = char_tok
         self.blank_index = blank_index
 
-    def charseq_decode(self, sequence):
+    def charseq_decode(self, sequence:List[int])->str:
         res = []
         sequence = [ int(x) for x in sequence ]
         for i, v in enumerate(sequence):
@@ -77,7 +77,7 @@ class CTCDecoder(object):
                     res.append(self.tok.pam[v])
         return(''.join(res))
     
-    def decode(self, probs_mat):
+    def decode(self, probs_mat:torch.Tensor):
         raise NotImplementedError
 
 
