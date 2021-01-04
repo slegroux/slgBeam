@@ -62,6 +62,9 @@ class CharacterTokenizer:
 
 
 class CTCDecoder(object):
+    """
+    Base Decoder class that provides decoding of string of ctc characters (with blank) into string of text
+    """
     def __init__(self, char_tok:CharacterTokenizer, blank_index:int=0):
         self.tok = char_tok
         self.blank_index = blank_index
@@ -82,12 +85,29 @@ class CTCDecoder(object):
 
 
 class GreedyDecoder(CTCDecoder):
+    """
+    Decoder that chooses character with higher probability at each time step (best path)
+    """
+    def __init__(self, char_tok:CharacterTokenizer, blank_index:int=0):
+        super().__init__(char_tok, blank_index)
+
+    def decode(self, probs:torch.Tensor)->str:
+        best_path = torch.argmax(probs, dim=0)
+        return(self.charseq_decode(best_path))
+
+
+
+class SimpleBeamSearch(CTCDecoder):
+    """
+    Decoder that keeps track of N best beams at each time step
+    """
     def __init__(self, char_tok, blank_index=0):
         super().__init__(char_tok, blank_index)
 
-    def decode(self, probs):
-        best_path = torch.argmax(probs, dim=0)
-        return(self.charseq_decode(best_path))
+    
+
+    
+
 
 
 if __name__ == "__main__":
