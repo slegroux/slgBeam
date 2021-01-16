@@ -6,6 +6,8 @@ import numpy as np
 import torch
 from IPython import embed
 from decoder import CTCDecoder, GreedyDecoder, CharacterTokenizer
+from graph import Graph, Node
+import copy
 
 @pytest.fixture(scope='module')
 def data():
@@ -17,6 +19,7 @@ def data():
 
 def test_data(data):
     assert data['probs'].shape ==  torch.Size([80, 100])
+    assert len(data['classes']) ==  79
 
 def test_tokenizer(data):
     tok = CharacterTokenizer()
@@ -41,3 +44,11 @@ def test_greedy(data):
     tok = CharacterTokenizer(classes=data['classes'])
     decoder = GreedyDecoder(tok, blank_index=len(tok))
     assert decoder.decode(data['probs']) == "the fak friend of the fomly hae tC"
+
+def test_rand(data):
+    n1 = Node(1)
+    n2 = Node(2)
+    nodes = [n1, n2]
+    n3 = copy.deepcopy(Node(1))
+    nodes.append(n3)
+    if n3 in nodes: print("y")

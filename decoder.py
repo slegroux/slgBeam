@@ -3,7 +3,9 @@
 
 from typing import List, Set, Dict, Tuple, Optional, Callable
 import string
+from queue import Queue
 import torch
+
 
 class CharacterTokenizer:
     """
@@ -84,6 +86,18 @@ class CTCDecoder(object):
         raise NotImplementedError
 
 
+class Test(CTCDecoder):
+    """
+    try stuff
+    """
+    def __init__(self, char_tok, blank_index=0):
+        super().__init__(char_tok, blank_index)
+        
+    
+    def decode(self, probs:torch.Tensor)->str:
+        pass        
+
+
 class GreedyDecoder(CTCDecoder):
     """
     Decoder that chooses character with higher probability at each time step (best path)
@@ -103,10 +117,11 @@ class SimpleBeamSearch(CTCDecoder):
     """
     def __init__(self, char_tok, blank_index=0):
         super().__init__(char_tok, blank_index)
-
+         
     
+    def decode(self, probs:torch.Tensor)->str:
+        pass
 
-    
 
 
 
