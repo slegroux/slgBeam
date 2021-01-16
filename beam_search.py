@@ -205,3 +205,4 @@ if __name__ == "__main__":
     score = Score(t, mat_prob)
     print(score(1,'-'))
     bs = BeamSearch(syms, mat_prob)
+    bs.decode(2)

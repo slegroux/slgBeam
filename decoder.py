@@ -5,6 +5,7 @@ from typing import List, Set, Dict, Tuple, Optional, Callable
 import string
 import torch
 
+
 class CharacterTokenizer:
     """
     Convert sentences into indices of characters and back
@@ -86,8 +87,35 @@ class GreedyDecoder(CTCDecoder):
         super().__init__(char_tok, blank_index)
 
     def decode(self, probs):
-        best_path = torch.argmax(probs, dim=0)
-        return(self.charseq_decode(best_path))
+        best_paths = torch.argmax(probs, dim=2)
+        return([self.charseq_decode(x) for x in best_paths])
+
+
+class Beam():
+    def __init__(self, seq='', prob_b=1.0, prob_nb=0.0):
+        self.seq = seq
+        self.prob_b = prob_b
+        self.prob_nb = prob_nb
+    
+    def extend(self, c, prob_c):
+        if c == '<BLANK>':
+            self.prob_b += prob_c *( self.prob_b + self.prob_nb)
+
+
+
+class BeamSearchDecoder(CTCDecoder):
+    def __init__(self, char_tok, blank_index=0):
+        super().__init__(char_tok, blank_index)
+
+    def decode(mat_probs, beam_size):
+        n_t = mat_probs.shape[1]
+        n_c = mat_probs.shape[2]
+        empty_beam = Beam()
+        beams = [empty_beam]
+        for i in range(n_t):
+            
+            
+
 
 
 if __name__ == "__main__":
